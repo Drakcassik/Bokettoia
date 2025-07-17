@@ -1,297 +1,153 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat - Studio Lobos</title>
-    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+  <title>Chat - Studio Lobos</title>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        html, body {
-            height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
-            overflow: hidden;
-        }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #edece7;
+      overflow: hidden;
+    }
 
-        .chat-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
+    .chat-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      background: #edece7;
+      z-index: 1;
+    }
 
-        .chat-wrapper {
-            width: 100%;
-            height: 100%;
-            background: #edece7;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #e9ecef;
-        }
+    .chat-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* Desktop - margem e bordas arredondadas */
-        @media (min-width: 768px) {
-            .chat-container {
-                padding: 40px;
-                background: #ffffff;
-            }
+    .n8n-chat {
+      flex: 1 !important;
+      height: 100% !important;
+      width: 100% !important;
+      border: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
 
-            .chat-wrapper {
-                border-radius: 16px;
-                box-shadow: 0 10px 30px rgba(64, 18, 51, 0.1);
-                max-width: 1200px;
-                max-height: 800px;
-                margin: 0 auto;
-                align-self: center;
-                border: 2px solid #401233;
-            }
-        }
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      flex-direction: column;
+      color: #6c757d;
+    }
 
-        /* Mobile - fullscreen completo */
-        @media (max-width: 767px) {
-            .chat-container {
-                padding: 0;
-            }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e9ecef;
+      border-top: 4px solid #401233;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
 
-            .chat-wrapper {
-                border-radius: 0;
-                box-shadow: none;
-            }
-        }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-        .header {
-            background: #333;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            display: none; /* Removed the header */
-        }
-
-        .header-title {
-            flex: 1;
-            text-align: center;
-        }
-
-        .close-button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-            display: none;
-        }
-
-        .close-button:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Mostrar botão fechar apenas em mobile */
-        @media (max-width: 767px) {
-            .close-button {
-                display: block;
-            }
-
-            .header {
-                padding: 0.75rem 1rem;
-            }
-        }
-
-        .chat-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Personalização do chat n8n */
-        .n8n-chat {
-            height: 100% !important;
-            width: 100% !important;
-            border: none !important;
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-
-        /* Loading animation */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            flex-direction: column;
-            color: #6c757d;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #e9ecef;
-            border-top: 4px solid #401233;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Customizações específicas para mobile */
-        @media (max-width: 767px) {
-            .loading {
-                padding: 2rem 1rem;
-            }
-
-            .spinner {
-                width: 30px;
-                height: 30px;
-                border-width: 3px;
-            }
-        }
-
-        /* Ajustes para telas muito pequenas */
-        @media (max-width: 480px) {
-            .header {
-                font-size: 1rem;
-                padding: 0.5rem 0.75rem;
-            }
-
-            .header-title {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Customizações para o componente n8n chat */
-        :global(.n8n-chat-container) {
-            height: 100% !important;
-            max-height: none !important;
-        }
-
-        :global(.n8n-chat-messages) {
-            max-height: none !important;
-        }
-    </style>
+    /* Remove limites de altura */
+    :global(.n8n-chat-container),
+    :global(.n8n-chat-messages) {
+      height: 100% !important;
+      max-height: none !important;
+    }
+  </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-wrapper">
-            
-            <div class="chat-content">
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p>Carregando chat...</p>
-                </div>
-            </div>
-        </div>
+  <div class="chat-wrapper">
+    <div class="chat-content">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Carregando chat...</p>
+      </div>
     </div>
+  </div>
 
-    <script>
-        function closeChat() {
-            if (window.opener) {
-                window.close();
-            } else {
-                window.history.back();
-            }
+  <script>
+    // Corrige altura da viewport no mobile
+    const setFullHeight = () => {
+      document.documentElement.style.height = window.innerHeight + 'px';
+    };
+
+    setFullHeight();
+    window.addEventListener('resize', setFullHeight);
+    window.addEventListener('orientationchange', setFullHeight);
+  </script>
+
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+    try {
+      setTimeout(() => {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+      }, 1000);
+
+      createChat({
+        webhookUrl: 'https://studiolobos.app.n8n.cloud/webhook/58b6b2e6-e442-436f-a97f-9e03d2713a90/chat',
+        target: '.chat-content',
+        mode: 'fullscreen',
+        open: true,
+        showButton: false,
+        initialMessages: [
+          { text: 'AI Boketto 🤖', sender: 'bot' },
+          { text: 'Search, analyze and capture insights with AI Boketto', sender: 'bot' }
+        ],
+        theme: {
+          primaryColor: '#401233',
+          textColor: '#333',
+          chatWindow: {
+            backgroundColor: '#edece7',
+            height: '100%',
+            maxHeight: '100%'
+          }
+        },
+        i18n: {
+          en: {
+            title: 'AI Boketto',
+            subtitle: 'Search, analyze and capture insights with AI',
+            footer: '',
+            getStarted: 'Get Started',
+            inputPlaceholder: 'Type your question...'
+          }
         }
-
-        // Prevenir zoom no mobile quando focar em inputs
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        });
-
-        // Ajustar altura da viewport em mobile
-        function setViewportHeight() {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-
-        setViewportHeight();
-        window.addEventListener('resize', setViewportHeight);
-        window.addEventListener('orientationchange', setViewportHeight);
-    </script>
-
-    <script type="module">
-        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
-        try {
-            // Remove loading depois de um pequeno delay
-            setTimeout(() => {
-                const loading = document.getElementById('loading');
-                if (loading) {
-                    loading.style.display = 'none';
-                }
-            }, 1000);
-
-            createChat({
-                webhookUrl: 'https://studiolobos.app.n8n.cloud/webhook/58b6b2e6-e442-436f-a97f-9e03d2713a90/chat',
-                target: '.chat-content',
-                mode: 'fullscreen',
-                open: true,
-                showButton: false,
-                initialMessages: [
-                    {
-                        text: 'AI Boketto 🤖',
-                        sender: 'bot'
-                    },
-                    {
-                        text: 'Search, analyze and capture insights with AI Boketto',
-                        sender: 'bot'
-                    }
-                ],
-                // Configurações personalizadas
-                theme: {
-                    primaryColor: '#401233',
-                    textColor: '#333',
-                    chatWindow: {
-                        backgroundColor: '#edece7',
-                        height: '100%',
-                        maxHeight: '100%'
-                    }
-                },
-                // Customizações de interface
-                i18n: {
-                    en: {
-                        title: 'AI Boketto',
-                        subtitle: 'Search, analyze and capture insights with AI',
-                        footer: '',
-                        getStarted: 'Get Started',
-                        inputPlaceholder: 'Type your question...'
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Erro ao carregar o chat:', error);
-            const loadingText = document.querySelector('.loading p');
-            if (loadingText) {
-                loadingText.textContent = 'Erro ao carregar o chat. Tente recarregar a página.';
-            }
-        }
-    </script>
+      });
+    } catch (error) {
+      console.error('Erro ao carregar o chat:', error);
+      const loadingText = document.querySelector('.loading p');
+      if (loadingText) {
+        loadingText.textContent = 'Erro ao carregar o chat. Tente recarregar a página.';
+      }
+    }
+  </script>
 </body>
 </html>
+
