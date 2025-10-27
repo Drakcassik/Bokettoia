@@ -2,187 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, height=device-height">
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3d2f41" />
   <title>Boketto Central Chat</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <!-- n8n Chat -->
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 
+  <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100vh;
       width: 100%;
-      background: #edece7;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    .chat-wrapper {
+      height: 100%;
+      background: #f5f3ee;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      overflow: hidden;
     }
 
-    .chat-header {
-      background: #fff;
-      padding: 15px 20px;
-      font-weight: bold;
-      font-size: 18px;
-      color: #444;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .chat-body {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-    }
-
-    .chat-message {
-      margin-bottom: 15px;
-    }
-
-    .chat-message.user {
-      text-align: right;
-    }
-
-    .chat-message .bubble {
-      display: inline-block;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-
-    .chat-message.user .bubble {
-      background-color: #4a3f55;
-      color: #fff;
-      border-bottom-right-radius: 5px;
-    }
-
-    .chat-message.bot .bubble {
-      background-color: #fff;
-      color: #333;
-      border-bottom-left-radius: 5px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .chat-footer {
+    /* Chat container ocupando toda a tela */
+    #chat-target {
+      width: 100%;
+      height: 100%;
       display: flex;
+      justify-content: center;
       align-items: center;
-      padding: 10px 15px;
-      background: #fff;
-      border-top: 1px solid #ddd;
-      position: sticky;
-      bottom: 0;
-      z-index: 20;
     }
 
-    .chat-footer input[type="text"] {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 10px 15px;
-      font-size: 16px;
-      outline: none;
+    /* Tema Boketto refinado */
+    :root {
+      --chat--color--primary: #3d2f41;
+      --chat--color--primary-shade-50: #56425d;
+      --chat--color--secondary: #b58e63;
+      --chat--color-light: #f5f3ee;
+      --chat--color-dark: #2a232d;
+      --chat--color-white: #ffffff;
+      --chat--border-radius: 1.25rem;
+      --chat--window--width: 100%;
+      --chat--window--height: 100%;
+      --chat--header--background: var(--chat--color--primary);
+      --chat--header--color: var(--chat--color-white);
+      --chat--message--bot--background: var(--chat--color-white);
+      --chat--message--bot--color: var(--chat--color-dark);
+      --chat--message--user--background: var(--chat--color--primary);
+      --chat--message--user--color: var(--chat--color-white);
+      --chat--textarea--height: 60px;
+      --chat--spacing: 1.2rem;
+      --chat--heading--font-size: 1.3em;
     }
 
-    .chat-footer button {
-      background-color: #4a3f55;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 15px;
-      margin-left: 10px;
-      cursor: pointer;
-      font-size: 16px;
+    /* Efeito de fade-in */
+    .n8n-chat {
+      animation: fadeIn 0.6s ease;
     }
 
-    .chat-footer button:hover {
-      background-color: #3c3345;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 768px) {
-      .chat-body {
-        padding: 10px;
-      }
-      .chat-footer {
-        padding: 8px;
-      }
-      .chat-footer input[type="text"] {
-        font-size: 15px;
-      }
-      .chat-footer button {
-        padding: 8px 12px;
-      }
+    .branding {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      font-size: 0.8rem;
+      color: #3d2f41;
+      opacity: 0.5;
     }
   </style>
 </head>
+
 <body>
-  <div class="chat-wrapper">
-    <div class="chat-header">🧠 Boketto Central</div>
+  <div id="chat-target"></div>
 
-    <div class="chat-body" id="chatBody">
-      <div class="chat-message bot">
-        <div class="bubble">
-          Hello! Welcome to Boketto Central 👋<br>
-          Which department would you like to access today?<br><br>
-          1️⃣ Shopify<br>
-          2️⃣ Google Analytics<br>
-          3️⃣ Boketto Management
-        </div>
-      </div>
-    </div>
-
-    <div class="chat-footer">
-      <input type="text" id="userInput" placeholder="Type your message..." />
-      <button id="sendBtn">Send</button>
-    </div>
-  </div>
-
-  <script>
-    const chatBody = document.getElementById('chatBody');
-    const input = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-
-    function appendMessage(content, sender = 'bot') {
-      const msg = document.createElement('div');
-      msg.classList.add('chat-message', sender);
-
-      const bubble = document.createElement('div');
-      bubble.classList.add('bubble');
-      bubble.innerHTML = content;
-
-      msg.appendChild(bubble);
-      chatBody.appendChild(msg);
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    sendBtn.addEventListener('click', () => {
-      const text = input.value.trim();
-      if (!text) return;
-      appendMessage(text, 'user');
-      input.value = '';
-
-      // Simulated bot response
-      setTimeout(() => {
-        appendMessage(`You selected "${text}". Please wait while I process your request...`);
-      }, 600);
-    });
-
-    // Ajuste dinâmico para teclado mobile
-    window.addEventListener('resize', () => {
-      document.body.style.height = window.innerHeight + 'px';
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+    createChat({
+      webhookUrl: 'https://flexible-werewolf-virtually.ngrok-free.app/webhook/14934dee-dc3d-4158-a374-61e04a598f57/chat',
+      target: '#chat-target',
+      mode: 'fullscreen',
+      showWelcomeScreen: false,
+      i18n: {
+        en: {
+          title: 'AI Boketto',
+          subtitle: 'Your personal assistant 🤖',
+          inputPlaceholder: 'Type your message...',
+          getStarted: 'Start new chat'
+        },
+      },
+      initialMessages: [
+        "👋 **Hello! Welcome to Boketto Central.**\n\n✨ Your personal AI assistant is here to help you.\n\nPlease choose a department to continue:",
+        "1️⃣ **Shopify** — Manage store, products and orders.\n\n2️⃣ **Google Analytics** — Insights and traffic overview.\n\n3️⃣ **Boketto Management** — Internal tools and operations."
+      ]
     });
   </script>
+
+  <div class="branding">✨ Boketto Central — Powered by n8n Chat</div>
 </body>
 </html>
