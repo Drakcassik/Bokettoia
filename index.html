@@ -6,12 +6,15 @@
   <meta name="theme-color" content="#4a3f55" />
   <title>Boketto Central</title>
 
-  <!-- PWA Config -->
+  <!-- Caminho base para GitHub Pages -->
+  <base href="/Bokettoia/">
+
+  <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-512.png" />
 
-  <!-- n8n Chat Style -->
+  <!-- Estilos do chat -->
   <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 
   <style>
@@ -34,7 +37,6 @@
       transition: opacity 0.8s ease, filter 0.8s ease;
     }
 
-    /* Tema personalizado Boketto */
     :root {
       --chat--color--primary: #4a3f55;
       --chat--color--secondary: #b58e63;
@@ -55,7 +57,6 @@
       --chat--heading--font-size: 1.3em;
     }
 
-    /* Loading screen */
     #loading-screen {
       position: fixed;
       inset: 0;
@@ -93,7 +94,6 @@
       50% { transform: scale(1.08); opacity: 1; }
     }
 
-    /* Branding discreto */
     .branding {
       position: absolute;
       bottom: 12px;
@@ -115,19 +115,17 @@
 </head>
 
 <body>
-  <!-- Tela de loading -->
   <div id="loading-screen">
     <div id="loading-logo"></div>
     <div id="loading-text">Loading Boketto Central...</div>
   </div>
 
-  <!-- Chat target -->
   <div id="chat-target"></div>
 
   <script type="module">
     import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
 
-    const chat = createChat({
+    createChat({
       webhookUrl: 'https://flexible-werewolf-virtually.ngrok-free.app/webhook/14934dee-dc3d-4158-a374-61e04a598f57/chat',
       target: '#chat-target',
       mode: 'fullscreen',
@@ -146,7 +144,6 @@
       ]
     });
 
-    // Remove tela de loading quando o chat estiver pronto
     window.addEventListener('load', () => {
       const loading = document.getElementById('loading-screen');
       const chatTarget = document.getElementById('chat-target');
@@ -160,7 +157,6 @@
 
   <div class="branding">✨ Boketto Central — Powered by n8n Chat</div>
 
-  <!-- PWA Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
