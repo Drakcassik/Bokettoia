@@ -1,18 +1,19 @@
-const CACHE_NAME = 'boketto-central-v1';
+const CACHE_NAME = "boketto-pwa-v2";
 const urlsToCache = [
-  'chatbotcentralboketto.html',
-  'manifest.json',
-  'icon-192.png',
-  'icon-512.png'
+  "/Bokettoia/",
+  "/Bokettoia/index.html",
+  "/Bokettoia/manifest.json",
+  "/Bokettoia/icon-192.png",
+  "/Bokettoia/icon-512.png"
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
